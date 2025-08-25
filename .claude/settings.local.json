@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm add:*)",
+      "WebFetch(domain:docs.rwsdk.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
