@@ -9,11 +9,13 @@ This is a RedwoodSDK project - a framework for building full-stack React applica
 ## Architecture
 
 **Core Entry Points:**
+
 - `src/worker.tsx` - Server-side entry point that defines the app with routing, middleware, and SSR
 - `src/client.tsx` - Client-side entry point for hydration
 - `src/app/Document.tsx` - HTML document wrapper component
 
 **Request Flow:**
+
 1. Requests hit the Cloudflare Worker defined in `src/worker.tsx`
 2. The `defineApp` function processes middleware (headers, context setup)
 3. Routes are rendered server-side with the `Document` wrapper
@@ -21,6 +23,7 @@ This is a RedwoodSDK project - a framework for building full-stack React applica
 5. Client-side navigation intercepts internal links for faster page transitions
 
 **Key Patterns:**
+
 - **Suspense-based Components**: Components like `Comp1` and `Comp2` are async with artificial delays, demonstrating SSR streaming
 - **Security Headers**: The `setCommonHeaders` middleware applies comprehensive security headers including CSP with nonce-based script execution
 - **Type Augmentation**: The `types/rw.d.ts` extends the RedwoodSDK's default context with the project's `AppContext`
@@ -62,6 +65,7 @@ npm run release
 ```
 
 **Pre-deployment Requirements:**
+
 - Update `wrangler.jsonc` name field from `__change_me__` to your worker name
 - Configure environment variables in `wrangler.jsonc` vars section
 - Ensure `rw-scripts ensure-deploy-env` requirements are met
@@ -84,6 +88,7 @@ npm run release
 ## Styling with Tailwind CSS
 
 The project uses Tailwind CSS v4 for styling:
+
 - **CSS File**: `src/app/styles.css` contains Tailwind imports and custom theme variables
 - **Configuration**: Tailwind is configured via `@tailwindcss/vite` plugin in `vite.config.mts`
 - **Theme Customization**: Use `@theme` block in CSS for custom design tokens
@@ -91,6 +96,7 @@ The project uses Tailwind CSS v4 for styling:
 - **Loading**: CSS is loaded via `styles.css?url` import in `Document.tsx`
 
 **Example Theme Customization:**
+
 ```css
 @theme {
   --color-primary: #3b82f6;
@@ -98,9 +104,31 @@ The project uses Tailwind CSS v4 for styling:
 }
 ```
 
+## Client-Side Navigation
+
+The project includes client-side navigation for faster page transitions:
+
+- **Configuration**: Set up in `src/client.tsx` via `initClientNavigation()`
+- **Behavior**: Internal links are intercepted and handled client-side
+- **Server Integration**: Each navigation still hits the server, preserving middleware and security
+- **Scroll Control**: Smooth scrolling enabled with automatic scroll-to-top
+
+**Configuration Options:**
+
+```typescript
+initClientNavigation({
+  scrollBehavior: "smooth", // "smooth" or "auto"
+  scrollToTop: true, // automatic scroll to top
+  onNavigate: async () => {
+    /* custom tracking */
+  },
+});
+```
+
 ## Security Implementation
 
 The project implements security best practices via middleware:
+
 - HSTS with 2-year max-age (production only)
 - Content type sniffing prevention
 - No-referrer policy
