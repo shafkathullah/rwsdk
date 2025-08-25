@@ -1,6 +1,6 @@
 export default async function Comp1() {
   // artificial delay
-  await new Promise((resolve) => setTimeout(resolve, 5000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   return (
     <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg">
