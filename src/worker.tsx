@@ -5,6 +5,7 @@ import { Document } from "@/app/Document";
 import { Home } from "@/app/pages/Home";
 import { About } from "@/app/pages/About";
 import { Contact } from "@/app/pages/Contact";
+import { Students } from "@/app/pages/Students";
 import { setCommonHeaders } from "@/app/headers";
 
 export type AppContext = {};
@@ -19,5 +20,6 @@ export default defineApp([
     route("/", Home),
     route("/about", About),
     route("/contact", Contact),
+    route("/students", Students),
   ]),
 ]);
