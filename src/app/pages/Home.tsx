@@ -1,77 +1,104 @@
-import { Suspense } from "react";
 import { RequestInfo } from "rwsdk/worker";
-import Comp1 from "@/app/components/Comp1";
-import Comp2 from "@/app/components/Comp2";
-import SkeletonComp from "@/app/components/SkeletonComp";
+import { getTodos, toggleTodo, deleteTodo } from "@/app/todos";
+import { AddTodoForm } from "@/app/components/AddTodoForm";
 
-export function Home({ ctx }: RequestInfo) {
+export async function Home({}: RequestInfo) {
+  const todos = await getTodos();
+  const completedCount = todos.filter((todo) => todo.completed).length;
+  const totalCount = todos.length;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 px-6 py-12">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-6xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-blue-600 bg-clip-text text-transparent mb-12 text-center tracking-tight">
-          Hello World
-        </h1>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-2xl mx-auto px-4">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+            Todo List
+          </h1>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-all duration-300">
-            <h2 className="text-2xl font-bold text-slate-800 mb-6 tracking-tight">
-              Component 1
-            </h2>
-            <Suspense fallback={<SkeletonComp />}>
-              <Comp1 />
-            </Suspense>
+          <div className="mb-6">
+            <div className="text-sm text-gray-600 mb-4">
+              {completedCount} of {totalCount} tasks completed
+            </div>
+
+            <AddTodoForm />
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-all duration-300">
-            <h2 className="text-2xl font-bold text-slate-800 mb-6 tracking-tight">
-              Component 2
-            </h2>
-            <Suspense fallback={<SkeletonComp />}>
-              <Comp2 />
-            </Suspense>
+          <div className="space-y-2">
+            {todos.length === 0 ? (
+              <p className="text-gray-500 text-center py-8">
+                No todos yet. Add one above!
+              </p>
+            ) : (
+              todos.map((todo) => (
+                <div
+                  key={todo.id}
+                  className={`flex items-center gap-3 p-3 border rounded-md transition-colors ${
+                    todo.completed
+                      ? "bg-gray-50 border-gray-200"
+                      : "bg-white border-gray-300"
+                  }`}
+                >
+                  <form action={toggleTodo}>
+                    <input type="hidden" name="id" value={todo.id} />
+                    <button
+                      type="submit"
+                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                        todo.completed
+                          ? "bg-green-500 border-green-500 text-white"
+                          : "border-gray-300 hover:border-green-500"
+                      }`}
+                    >
+                      {todo.completed && (
+                        <svg
+                          className="w-3 h-3"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  </form>
+
+                  <span
+                    className={`flex-1 ${
+                      todo.completed
+                        ? "line-through text-gray-500"
+                        : "text-gray-800"
+                    }`}
+                  >
+                    {todo.text}
+                  </span>
+
+                  <form action={deleteTodo}>
+                    <input type="hidden" name="id" value={todo.id} />
+                    <button
+                      type="submit"
+                      className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                      title="Delete todo"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </form>
+                </div>
+              ))
+            )}
           </div>
         </div>
-
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 mb-12 hover:shadow-xl transition-all duration-300">
-          <h2 className="text-2xl font-bold text-slate-800 mb-8 tracking-tight">
-            Sample List
-          </h2>
-          <ul className="space-y-4">
-            <li className="flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl hover:from-blue-100 hover:to-indigo-100 transition-all duration-200 border border-blue-100">
-              <span className="w-3 h-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full mr-4 shadow-sm"></span>
-              <span className="text-slate-700 font-medium">Item 1</span>
-            </li>
-            <li className="flex items-center p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl hover:from-emerald-100 hover:to-green-100 transition-all duration-200 border border-emerald-100">
-              <span className="w-3 h-3 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full mr-4 shadow-sm"></span>
-              <span className="text-slate-700 font-medium">Item 2</span>
-            </li>
-            <li className="flex items-center p-4 bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl hover:from-violet-100 hover:to-purple-100 transition-all duration-200 border border-violet-100">
-              <span className="w-3 h-3 bg-gradient-to-r from-violet-500 to-purple-600 rounded-full mr-4 shadow-sm"></span>
-              <span className="text-slate-700 font-medium">Item 3</span>
-            </li>
-          </ul>
-        </div>
-
-        <nav className="flex justify-center space-x-6">
-          <a
-            href="/"
-            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            Home
-          </a>
-          <a
-            href="/about"
-            className="px-8 py-4 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-2xl hover:from-slate-700 hover:to-slate-800 transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            About
-          </a>
-          <a
-            href="/contact"
-            className="px-8 py-4 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-2xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            Contact
-          </a>
-        </nav>
       </div>
     </div>
   );
