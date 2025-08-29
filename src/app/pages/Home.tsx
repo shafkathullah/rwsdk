@@ -2,10 +2,19 @@ import { RequestInfo } from "rwsdk/worker";
 import { getTodos, toggleTodo, deleteTodo } from "@/app/todos";
 import { AddTodoForm } from "@/app/components/AddTodoForm";
 
-export async function Home({}: RequestInfo) {
-  const todos = await getTodos();
-  const completedCount = todos.filter((todo) => todo.completed).length;
-  const totalCount = todos.length;
+export async function Home({ request }: RequestInfo) {
+  const url = new URL(request.url);
+  const filter = url.searchParams.get("filter") || "all";
+  
+  const allTodos = await getTodos();
+  const todos = filter === "completed" 
+    ? allTodos.filter((todo) => todo.completed)
+    : filter === "active"
+    ? allTodos.filter((todo) => !todo.completed)
+    : allTodos;
+    
+  const completedCount = allTodos.filter((todo) => todo.completed).length;
+  const totalCount = allTodos.length;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -23,10 +32,49 @@ export async function Home({}: RequestInfo) {
             <AddTodoForm />
           </div>
 
+          <div className="mb-6">
+            <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
+              <a
+                href="?filter=all"
+                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md text-center transition-colors ${
+                  filter === "all"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                All ({totalCount})
+              </a>
+              <a
+                href="?filter=active"
+                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md text-center transition-colors ${
+                  filter === "active"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                Active ({totalCount - completedCount})
+              </a>
+              <a
+                href="?filter=completed"
+                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md text-center transition-colors ${
+                  filter === "completed"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                Completed ({completedCount})
+              </a>
+            </div>
+          </div>
+
           <div className="space-y-2">
             {todos.length === 0 ? (
               <p className="text-gray-500 text-center py-8">
-                No todos yet. Add one above!
+                {filter === "completed" 
+                  ? "No completed todos yet!"
+                  : filter === "active"
+                  ? "No active todos!"
+                  : "No todos yet. Add one above!"}
               </p>
             ) : (
               todos.map((todo) => (
