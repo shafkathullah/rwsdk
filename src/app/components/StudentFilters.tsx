@@ -23,11 +23,11 @@ export function StudentFilters({
           <label className="text-sm font-medium text-gray-700 mb-1">Year</label>
           <select
             value={yearFilter}
-            onChange={(e) => {
+            onChange={async (e) => {
               const params = new URLSearchParams();
               if (e.target.value !== "all") params.set("year", e.target.value);
               if (majorFilter !== "all") params.set("major", majorFilter);
-              navigate(`/students?${params.toString()}`);
+              await navigate(`/students?${params.toString()}`);
             }}
             className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
@@ -46,11 +46,11 @@ export function StudentFilters({
           </label>
           <select
             value={majorFilter}
-            onChange={(e) => {
+            onChange={async (e) => {
               const params = new URLSearchParams();
               if (yearFilter !== "all") params.set("year", yearFilter);
               if (e.target.value !== "all") params.set("major", e.target.value);
-              navigate(`/students?${params.toString()}`);
+              await navigate(`/students?${params.toString()}`);
             }}
             className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
