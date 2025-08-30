@@ -18,6 +18,7 @@ export async function FruitList() {
     "Papaya",
     "Coconut",
     "Lemon",
+    "Carrot",
   ];
 
   return (
