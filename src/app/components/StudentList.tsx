@@ -5,6 +5,8 @@ type StudentListProps = {
 };
 
 export async function StudentList({ filteredStudents }: StudentListProps) {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   return (
     <div className="space-y-2">
       {filteredStudents.length === 0 ? (
