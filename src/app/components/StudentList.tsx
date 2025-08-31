@@ -1,22 +1,10 @@
-import { getStudents, filterAndSortStudents } from "@/app/students";
+import { getStudents, filterAndSortStudents, Student } from "@/app/students";
 
 type StudentListProps = {
-  yearFilter: string;
-  majorFilter: string;
+  filteredStudents: Student[];
 };
 
-export async function StudentList({
-  yearFilter,
-  majorFilter,
-}: StudentListProps) {
-  const allStudents = await getStudents();
-  const filteredStudents = filterAndSortStudents(
-    allStudents,
-    yearFilter,
-    majorFilter,
-    "name"
-  );
-
+export async function StudentList({ filteredStudents }: StudentListProps) {
   return (
     <div className="space-y-2">
       {filteredStudents.length === 0 ? (

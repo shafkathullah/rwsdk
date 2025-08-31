@@ -1,6 +1,6 @@
 import { RequestInfo } from "rwsdk/worker";
 import { Suspense } from "react";
-import { getStudents } from "@/app/students";
+import { filterAndSortStudents, getStudents } from "@/app/students";
 import { StudentFilters } from "@/app/components/StudentFilters";
 import { StudentList } from "@/app/components/StudentList";
 import { StudentListSkeleton } from "@/app/components/StudentListSkeleton";
@@ -11,6 +11,12 @@ export async function Students({ request }: RequestInfo) {
   const majorFilter = url.searchParams.get("major") || "all";
 
   const allStudents = await getStudents();
+  const filteredStudents = filterAndSortStudents(
+    allStudents,
+    yearFilter,
+    majorFilter,
+    "name"
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -24,11 +30,11 @@ export async function Students({ request }: RequestInfo) {
             yearFilter={yearFilter}
             majorFilter={majorFilter}
             totalCount={allStudents.length}
-            filteredCount={0}
+            filteredCount={filteredStudents.length}
           />
 
           <Suspense fallback={<StudentListSkeleton />}>
-            <StudentList yearFilter={yearFilter} majorFilter={majorFilter} />
+            <StudentList filteredStudents={filteredStudents} />
           </Suspense>
         </div>
       </div>
