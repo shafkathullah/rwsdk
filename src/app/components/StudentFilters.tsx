@@ -1,7 +1,7 @@
 "use client";
 
 import { YEARS, MAJORS } from "@/app/students";
-import { navigate } from "@/lib/navigation";
+import { navigate } from "rwsdk/client";
 import { useTransition } from "react";
 
 interface StudentFiltersProps {
@@ -18,7 +18,6 @@ export function StudentFilters({
   filteredCount,
 }: StudentFiltersProps) {
   // usetransition
-  const [isPending, startTransition] = useTransition();
 
   return (
     <div className="mb-6">
@@ -31,9 +30,7 @@ export function StudentFilters({
               const params = new URLSearchParams();
               if (e.target.value !== "all") params.set("year", e.target.value);
               if (majorFilter !== "all") params.set("major", majorFilter);
-              startTransition(async () => {
-                await navigate(`/students?${params.toString()}`);
-              });
+              navigate(`/students?${params.toString()}`);
             }}
             className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
@@ -56,9 +53,7 @@ export function StudentFilters({
               const params = new URLSearchParams();
               if (yearFilter !== "all") params.set("year", yearFilter);
               if (e.target.value !== "all") params.set("major", e.target.value);
-              startTransition(async () => {
-                await navigate(`/students?${params.toString()}`);
-              });
+              navigate(`/students?${params.toString()}`);
             }}
             className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
@@ -73,13 +68,9 @@ export function StudentFilters({
       </div>
 
       <div className="text-sm text-gray-600">
-        {isPending ? (
-          "Loading..."
-        ) : (
-          <span>
-            Showing {filteredCount} of {totalCount} students
-          </span>
-        )}
+        <span>
+          Showing {filteredCount} of {totalCount} students
+        </span>
       </div>
     </div>
   );
